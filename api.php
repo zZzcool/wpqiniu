@@ -13,9 +13,9 @@
 	class QiNiuApi
 	{
 		// 用于签名的公钥和私钥
-		private $accessKey = 'iRodR8NP2DhLCLXxydYLJfaIjxIyY7eC5cdCgxhi';
-		private $secretKey = '5IaxA510oF7RBL-tL74W14nNDnmCvKT4Qirl4vXV';
-		private $bucket = 'wptest';
+		private $accessKey = 'tJZ6tKImv_xfhIJA75AsXWKQVvsU1vTxR6QQUwG0';
+		private $secretKey = 'nFV3A1gRpya4Z1vCZz8lul4dsE7in5boPoDK1pCa';
+		private $bucket = 'laojiang';
 		protected $auth;
 
 		public function __construct() {
@@ -23,28 +23,15 @@
 			$this->auth = new Auth($this->accessKey, $this->secretKey);
 		}
 
-		protected function Auth()
-		{
-
-		}
-
-		public function Upload() {
-			// 需要填写你的 Access Key 和 Secret Key
-			$accessKey ="your accessKey";
-			$secretKey = "your secretKey";
-			$bucket = "your bucket name";
+		public function Upload($key = 'my-php-logo.png',$localFilePath = './php-logo.png') {
 			// 构建鉴权对象
-			$auth = new Auth($accessKey, $secretKey);
 			// 生成上传 Token
-			$token = $auth->uploadToken($bucket);
-			// 要上传文件的本地路径
-			$filePath = './php-logo.png';
-			// 上传到七牛后保存的文件名
-			$key = 'my-php-logo.png';
+			$token = $this->auth->uploadToken($this->bucket);
+
 			// 初始化 UploadManager 对象并进行文件的上传。
 			$uploadMgr = new UploadManager();
 			// 调用 UploadManager 的 putFile 方法进行文件的上传。
-			list($ret, $err) = $uploadMgr->putFile($token, $key, $filePath);
+			list($ret, $err) = $uploadMgr->putFile($token, $key, $localFilePath);
 			echo "\n====> putFile result: \n";
 			if ($err !== null) {
 				var_dump($err);
@@ -53,20 +40,12 @@
 			}
 		}
 
-		public function Delete() {
-			$accessKey = getenv('QINIU_ACCESS_KEY');
-			$secretKey = getenv('QINIU_SECRET_KEY');
-			$bucket = getenv('QINIU_TEST_BUCKET');
-			$auth = new Auth($accessKey, $secretKey);
+		public function Delete($keys) {
 			$config = new \Qiniu\Config();
-			$bucketManager = new BucketManager($auth, $config);
+			$bucketManager = new BucketManager($this->auth, $config);
 			//每次最多不能超过1000个
-			$keys = array(
-				'qiniu.mp4',
-				'qiniu.png',
-				'qiniu.jpg'
-			);
-			$ops = $bucketManager->buildBatchDelete($bucket, $keys);
+
+			$ops = $bucketManager->buildBatchDelete($this->bucket, $keys);
 			list($ret, $err) = $bucketManager->batch($ops);
 			if ($err) {
 				print_r($err);
@@ -75,15 +54,10 @@
 			}
 		}
 
-		public function hasExist() {
-			$accessKey = getenv('QINIU_ACCESS_KEY');
-			$secretKey = getenv('QINIU_SECRET_KEY');
-			$bucket = getenv('QINIU_TEST_BUCKET');
-			$key = "qiniu.mp4";
-			$auth = new Auth($accessKey, $secretKey);
+		public function hasExist($key) {
 			$config = new \Qiniu\Config();
-			$bucketManager = new \Qiniu\Storage\BucketManager($auth, $config);
-			list($fileInfo, $err) = $bucketManager->stat($bucket, $key);
+			$bucketManager = new \Qiniu\Storage\BucketManager($this->auth, $config);
+			list($fileInfo, $err) = $bucketManager->stat($this->bucket, $key);
 			if ($err) {
 				print_r($err);
 			} else {
@@ -94,14 +68,9 @@
 	}
 
 
-
-
-
-
-
-	// 生成上传Token
-	$token = $auth->uploadToken($bucket);
-
-
-
-	var_dump($token);
+	$qn = new QiNiuApi();
+//	$qn->Upload('2019/04/微信图片_20190402175557.gif', 'E:\web\wordpress\wp-content\uploads\2019\04\微信图片_20190402175557.gif');
+    $keys = array(
+	    '2019/04/2019042809091717.jpg',
+    );
+	$qn->Delete($keys);
