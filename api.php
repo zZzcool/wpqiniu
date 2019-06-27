@@ -16,27 +16,39 @@
 		private $accessKey = 'tJZ6tKImv_xfhIJA75AsXWKQVvsU1vTxR6QQUwG0';
 		private $secretKey = 'nFV3A1gRpya4Z1vCZz8lul4dsE7in5boPoDK1pCa';
 		private $bucket = 'laojiang';
+		private $token_expires = 3600;  // Token 的超时时间。
 		protected $auth;
 
-		public function __construct() {
+		public function __construct($option) {
+			$this->bucket = $option['bucket'];
 			// 初始化签权对象
-			$this->auth = new Auth($this->accessKey, $this->secretKey);
+			$this->auth = new Auth($option['accessKey'], $option['secretKey']);
 		}
 
-		public function Upload($key = 'my-php-logo.png',$localFilePath = './php-logo.png') {
+		public function uploadToken() {
+			$uploadToken = wp_cache_get('qiniuUploadToken');
+			if (!$uploadToken) {
+				$uploadToken = $this->auth->uploadToken($this->bucket, null, $this->token_expires);
+				wp_cache_set('qiniuUploadToken', $uploadToken);
+			}
+			return $uploadToken;
+		}
+
+		public function Upload($key, $localFilePath) {
 			// 构建鉴权对象
 			// 生成上传 Token
-			$token = $this->auth->uploadToken($this->bucket);
+			$token = $this->uploadToken();
 
 			// 初始化 UploadManager 对象并进行文件的上传。
 			$uploadMgr = new UploadManager();
 			// 调用 UploadManager 的 putFile 方法进行文件的上传。
 			list($ret, $err) = $uploadMgr->putFile($token, $key, $localFilePath);
-			echo "\n====> putFile result: \n";
 			if ($err !== null) {
-				var_dump($err);
+//				var_dump($err);
+				return False;
 			} else {
-				var_dump($ret);
+//				var_dump($ret);
+				return True;
 			}
 		}
 
@@ -44,13 +56,14 @@
 			$config = new \Qiniu\Config();
 			$bucketManager = new BucketManager($this->auth, $config);
 			//每次最多不能超过1000个
-
 			$ops = $bucketManager->buildBatchDelete($this->bucket, $keys);
 			list($ret, $err) = $bucketManager->batch($ops);
 			if ($err) {
-				print_r($err);
+//				print_r($err);
+				return False;
 			} else {
-				print_r($ret);
+//				print_r($ret);
+				return True;
 			}
 		}
 
@@ -59,18 +72,12 @@
 			$bucketManager = new \Qiniu\Storage\BucketManager($this->auth, $config);
 			list($fileInfo, $err) = $bucketManager->stat($this->bucket, $key);
 			if ($err) {
-				print_r($err);
+//				print_r($err);
+				return False;
 			} else {
-				print_r($fileInfo);
+//				print_r($fileInfo);
+				return True;
 			}
 		}
 
 	}
-
-
-	$qn = new QiNiuApi();
-//	$qn->Upload('2019/04/微信图片_20190402175557.gif', 'E:\web\wordpress\wp-content\uploads\2019\04\微信图片_20190402175557.gif');
-    $keys = array(
-	    '2019/04/2019042809091717.jpg',
-    );
-	$qn->Delete($keys);
