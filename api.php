@@ -1,10 +1,11 @@
 <?php
-	if(version_compare(PHP_VERSION,'5.3.0', '<')){
-		echo '当前版本为'.phpversion().'小于5.3.0哦';
-	}else {
-		echo '当前版本为' . PHP_VERSION . '大于5.3.0';
-	}
+//	if(version_compare(PHP_VERSION,'5.3.0', '<')){
+//		echo '当前版本为'.phpversion().'小于5.3.0哦';
+//	}else {
+//		echo '当前版本为' . PHP_VERSION . '大于5.3.0';
+//	}
 	require 'sdk/autoload.php';
+	
 	use \Qiniu\Auth;
 	use \Qiniu\Storage\UploadManager;	// 引入上传类
 	use \Qiniu\Storage\BucketManager;
@@ -13,9 +14,9 @@
 	class QiNiuApi
 	{
 		// 用于签名的公钥和私钥
-		private $accessKey = 'tJZ6tKImv_xfhIJA75AsXWKQVvsU1vTxR6QQUwG0';
-		private $secretKey = 'nFV3A1gRpya4Z1vCZz8lul4dsE7in5boPoDK1pCa';
-		private $bucket = 'laojiang';
+//		private $accessKey = 'tJZ6tKImv_xfhIJA75AsXWKQVvsU1vTxR6QQUwG0';
+//		private $secretKey = 'nFV3A1gRpya4Z1vCZz8lul4dsE7in5boPoDK1pCa';
+		private $bucket;  // = 'laojiang';
 		private $token_expires = 3600;  // Token 的超时时间。
 		protected $auth;
 
