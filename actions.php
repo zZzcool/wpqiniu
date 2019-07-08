@@ -220,7 +220,7 @@ function wpqiniu_add_setting_page() {
 	if (!function_exists('wpqiniu_setting_page')) {
 		require_once 'setting_page.php';
 	}
-	add_menu_page('WP七牛对象存储设置', 'WP七牛对象存储设置', 'manage_options', __FILE__, 'wpqiniu_setting_page');
+	add_menu_page('七牛对象存储设置', '七牛对象存储设置', 'manage_options', __FILE__, 'wpqiniu_setting_page');
 }
 
 // 在插件列表页添加设置按钮
