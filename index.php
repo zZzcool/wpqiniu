@@ -15,7 +15,7 @@ $current_wp_version = get_bloginfo('version');
 register_activation_hook(__FILE__, 'wpqiniu_set_options');
 register_deactivation_hook(__FILE__, 'wpqiniu_restore_options');  # 禁用时触发钩子
 
-add_action('upgrader_process_complete', 'wpqiniu_upgrade_options');  # 插件升级完成时执行
+# add_action('upgrader_process_complete', 'wpqiniu_upgrade_options');  # 插件升级完成时执行
 
 # 避免上传插件/主题被同步到对象存储
 if (substr_count($_SERVER['REQUEST_URI'], '/update.php') <= 0) {
